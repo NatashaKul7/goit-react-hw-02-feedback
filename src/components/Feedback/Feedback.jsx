@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 
 import Statistics from 'components/Statistics/Statistics';
-import NoFeedback from 'components/NoFeedback/NoFeedback';
+import Notification from 'components/NoFeedback/Notification';
+import Button from 'components/Buttons/Buttons';
+
+
+import { Container } from './Feedback.styled';
 
 class Feedback extends Component {
   state = {
@@ -10,21 +14,9 @@ class Feedback extends Component {
     bad: 0,
   };
 
-  addGood = () => {
-    this.setState(prevState => ({
-      good: prevState.good + 1,
-    }));
-  };
-  addNeutral = () => {
-    this.setState(prevState => ({
-      neutral: prevState.neutral + 1,
-    }));
-  };
-  addBad = () => {
-    this.setState(prevState => ({
-      bad: prevState.bad + 1,
-    }));
-  };
+    onButtonClick = index => {
+    this.setState(prevState => ({ [index]: prevState[index] + 1 }));
+    };
 
   countTotalFeedback() {
     return this.state.good + this.state.neutral + this.state.bad;
@@ -42,30 +34,27 @@ class Feedback extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <button type="button" onClick={this.addGood}>
-          Good
-        </button>
-        <button type="button" onClick={this.addNeutral}>
-          Neutral
-        </button>
-        <button type="button" onClick={this.addBad}>
-          Bad
-        </button>
+    const states = this.state
+    const totalCount = this.countTotalFeedback();
+    const options = Object.keys(this.state);
 
-        {this.state.good > 0 || this.state.neutral > 0 || this.state.bad > 0 ? (
+    return (
+      <Container>
+        <h1> Please leave feedback</h1>
+        <Button options={options} onLeaveFeedback={this.onButtonClick} />
+
+        {totalCount > 0 ? (
           <Statistics
-            good={this.state.good}
-            neutral={this.state.neutral}
-            bad={this.state.bad}
+            good={states.good}
+            neutral={states.neutral}
+            bad={states.bad}
             total={this.countTotalFeedback()}
             positivePercentage={this.countPositiveFeedbackPercentage()}
           />
         ) : (
-        <NoFeedback/>
+            <Notification/>
         )}
-      </div>
+      </Container>
     );
   }
 }
